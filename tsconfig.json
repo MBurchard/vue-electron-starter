@@ -9,7 +9,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "useDefineForClassFields": true,
+    "useUnknownInCatchVariables": false,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
