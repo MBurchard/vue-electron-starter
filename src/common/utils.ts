@@ -1,4 +1,4 @@
-export function deepCopy<T>(sth: T): unknown {
+export function deepCopy(sth: unknown): unknown {
   if (!sth) {
     return sth;
   }
@@ -12,15 +12,15 @@ export function deepCopy<T>(sth: T): unknown {
     sth.getAttributeNames().forEach(it => {
       attributes += ` ${it}="${sth.getAttribute(it)}"`;
     });
-    // return sth.outerHTML;
     return `<${sth.nodeName}${attributes}>...</${sth.nodeName}>`;
+    // may also be an option...
+    // return sth.outerHTML;
   }
   if (sth instanceof Function) {
     return `>>>${sth.toString()}<<<`;
   }
   if (sth instanceof Object) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = {...(sth as { [key: string]: any })} as { [key: string]: any };
+    const result: { [key: string]: unknown } = {};
     Object.entries(sth).forEach(([key, value]) => {
       result[key] = deepCopy(value);
     });

@@ -1,12 +1,18 @@
 import dayjs from 'dayjs';
 
-export type LogLevel = 'DEBUG' | 'ERROR' | 'INFO' | 'TRACE' | 'WARN';
+export enum LogLevel {
+  'DEBUG' = 10000,
+  'ERROR' = 1000,
+  'INFO' = 5000,
+  'TRACE' = 20000,
+  'WARN' = 2000,
+}
 
 /**
  * An Appender interface that is able to log asynchronously.
  */
 export interface Appender {
-  log: (...args: unknown[]) => Promise<void>
+  log: (...args: unknown[]) => Promise<void>;
 }
 
 /**
@@ -24,34 +30,38 @@ const appender: Appender[] = [new ConsoleWrapper()];
  * Logging configuration.
  */
 export interface LoggerConfig {
-  appender: Appender[]
+  appender: Appender[];
 }
 
 class Logger {
-  private readonly category;
+  private readonly category: string;
+  private readonly logLevel: LogLevel;
 
-  constructor(category: string) {
+  constructor(category: string, logLevel: LogLevel) {
     this.category = category;
+    this.logLevel = logLevel;
   }
 
   debug(...args: unknown[]): void {
-    this.log('DEBUG', ...args);
+    this.log(LogLevel.DEBUG, ...args);
   }
 
   error(...args: unknown[]): void {
-    this.log('ERROR', ...args);
+    this.log(LogLevel.ERROR, ...args);
   }
 
   info(...args: unknown[]): void {
-    this.log('INFO', ...args);
+    this.log(LogLevel.INFO, ...args);
   }
 
   log(level: LogLevel, ...args: unknown[]): void {
-    appender.forEach(it => it.log(formatPrefix(level, this.category), ...args));
+    if (level <= this.logLevel) {
+      appender.forEach(it => it.log(formatPrefix(level, this.category), ...args));
+    }
   }
 
   warn(...args: unknown[]): void {
-    this.log('WARN', ...args);
+    this.log(LogLevel.WARN, ...args);
   }
 }
 
@@ -71,11 +81,16 @@ export function configureLogging(options: LoggerConfig) {
 
 function formatLogLevel(level: LogLevel): string {
   switch (level) {
-    case 'DEBUG': return '\x1B[36mDEBUG\x1B[m';
-    case 'ERROR': return '\x1B[91mERROR\x1B[m';
-    case 'INFO': return ' \x1B[32mINFO\x1B[m';
-    case 'TRACE': return 'TRACE';
-    case 'WARN': return ' \x1B[33mWARN\x1B[m';
+    case LogLevel.DEBUG:
+      return '\x1B[36mDEBUG\x1B[m';
+    case LogLevel.ERROR:
+      return '\x1B[91mERROR\x1B[m';
+    case LogLevel.INFO:
+      return ' \x1B[32mINFO\x1B[m';
+    case LogLevel.TRACE:
+      return 'TRACE';
+    case LogLevel.WARN:
+      return ' \x1B[33mWARN\x1B[m';
   }
 }
 
@@ -83,9 +98,9 @@ function formatPrefix(level: LogLevel, category: string): string {
   return `${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')} ${formatLogLevel(level)} [${category.padEnd(20, ' ')}]:`;
 }
 
-function init(category: string): Logger {
+function init(category: string, logLevel: LogLevel): Logger {
   if (!logger.has(category)) {
-    logger.set(category, new Logger(category));
+    logger.set(category, new Logger(category, logLevel));
   }
   const log = logger.get(category);
   if (log) {
@@ -107,11 +122,9 @@ export function logDirect(...args: unknown[]): void {
 /**
  * Prepares a Logger if not already there and returns it.
  *
- * @param category
+ * @param category defaults to main
+ * @param logLevel defaults to LogLevel.INFO
  */
-export function useLogger(category?: string): Logger {
-  if (category) {
-    return init(category);
-  }
-  return init('default');
+export function useLogger(category?: string, logLevel?: LogLevel): Logger {
+  return init(category || 'main', logLevel || LogLevel.INFO);
 }

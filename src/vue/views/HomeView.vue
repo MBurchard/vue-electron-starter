@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import {useLogger} from '@/common/simpleLog';
+import {LogLevel, useLogger} from '@/common/simpleLog';
 import HelloWorld from '@/vue/components/HelloWorld.vue';
 import {getFromBackend} from '@/vue/modules/backendBridge';
 
-const log = useLogger('HomeView');
+const log = useLogger('HomeView', LogLevel.DEBUG);
 
 getFromBackend('testChannel', 'HomeView').then(result => {
   log.debug('Test', result);
