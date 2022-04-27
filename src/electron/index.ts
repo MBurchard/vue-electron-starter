@@ -1,5 +1,6 @@
-import {useLogger} from '@/common/simpleLog';
+import {configureLogging, ConsoleWrapper, useLogger} from '@/common/simpleLog';
 import {registerFrontendHandler} from '@/electron/frontendBridge';
+import {initFrontendLoggingBridge} from '@/electron/frontendLoggingBridge';
 import {app, BrowserWindow, protocol} from 'electron';
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer';
 import path from 'path';
@@ -8,6 +9,10 @@ import {createProtocol} from 'vue-cli-plugin-electron-builder/lib';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
+configureLogging({
+  appender: [new ConsoleWrapper()],
+});
+initFrontendLoggingBridge();
 const log = useLogger('electron-main');
 
 // Scheme must be registered before the app is ready
