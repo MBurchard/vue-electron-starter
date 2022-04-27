@@ -1,4 +1,7 @@
+import {useLogger} from '@/common/simpleLog';
 import {contextBridge, ipcRenderer, IpcRendererEvent} from 'electron';
+
+const log = useLogger('preload');
 
 /**
  * Send something to the Electron backend using a specific channel and await a response.
@@ -11,7 +14,7 @@ contextBridge.exposeInMainWorld('getFromBackend',
     try {
       return ipcRenderer.invoke(channel, ...args);
     } catch (e) {
-      console.error(`Error in getFromBackend on channel '${channel}':`, e);
+      log.error(`Error in getFromBackend on channel '${channel}':`, e);
     }
   });
 
@@ -26,7 +29,7 @@ contextBridge.exposeInMainWorld('sendToBackend',
     try {
       ipcRenderer.send(channel, ...args);
     } catch (e) {
-      console.error(`Error in sendToBackend on channel '${channel}'::`, e);
+      log.error(`Error in sendToBackend on channel '${channel}'::`, e);
     }
   });
 
@@ -41,7 +44,7 @@ contextBridge.exposeInMainWorld('registerBackendListener',
     try {
       ipcRenderer.on(channel, listener);
     } catch (e) {
-      console.error(`Error in registered Electron backend listener on channel '${channel}'::`, e);
+      log.error(`Error in registered Electron backend listener on channel '${channel}'::`, e);
     }
   });
 
@@ -56,6 +59,6 @@ contextBridge.exposeInMainWorld('registerBackendListenerOnce',
     try {
       ipcRenderer.once(channel, listener);
     } catch (e) {
-      console.error(`Error in registered Electron backend listener (once) on channel '${channel}'::`, e);
+      log.error(`Error in registered Electron backend listener (once) on channel '${channel}'::`, e);
     }
   });

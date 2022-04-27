@@ -1,11 +1,17 @@
 <script lang="ts" setup>
+import {useLogger} from '@/common/simpleLog';
 import HelloWorld from '@/vue/components/HelloWorld.vue';
 import {getFromBackend} from '@/vue/modules/backendBridge';
 
+const log = useLogger('HomeView');
+
 getFromBackend('testChannel', 'HomeView').then(result => {
-  console.log('test', result);
+  log.debug('Test', result);
+  log.info('Test', result);
+  log.warn('Test', result);
+  log.error('Test', result);
 }).catch(reason => {
-  console.error('Error getting data from Electron', reason);
+  log.error('Error getting data from Electron', reason);
 });
 
 </script>

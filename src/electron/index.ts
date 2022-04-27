@@ -1,3 +1,4 @@
+import {useLogger} from '@/common/simpleLog';
 import {registerFrontendHandler} from '@/electron/frontendBridge';
 import {app, BrowserWindow, protocol} from 'electron';
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer';
@@ -7,12 +8,18 @@ import {createProtocol} from 'vue-cli-plugin-electron-builder/lib';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
+const log = useLogger('electron-main');
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   {scheme: 'app', privileges: {secure: true, standard: true}},
 ]);
 
 registerFrontendHandler('testChannel', (event, name) => {
+  log.debug('Test testChannel:', name);
+  log.info('Test testChannel:', name);
+  log.warn('Test testChannel:', name);
+  log.error('Test testChannel:', name);
   return `Hello ${name}`;
 });
 
@@ -65,7 +72,7 @@ app.on('ready', async () => {
     try {
       await installExtension(VUEJS3_DEVTOOLS);
     } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString());
+      log.error('Vue Devtools failed to install:', e.toString());
     }
   }
   createWindow().then();
