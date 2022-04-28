@@ -56,7 +56,8 @@ class Logger {
 
   log(level: LogLevel, ...args: unknown[]): void {
     if (level <= this.logLevel) {
-      appender.forEach(it => it.log(formatPrefix(level, this.category), ...args));
+      const prefix = formatPrefix(level, this.category);
+      appender.forEach(it => it.log(prefix, ...args));
     }
   }
 
@@ -95,7 +96,35 @@ function formatLogLevel(level: LogLevel): string {
 }
 
 function formatPrefix(level: LogLevel, category: string): string {
-  return `${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')} ${formatLogLevel(level)} [${category.padEnd(20, ' ')}]:`;
+  let func = 'undefined';
+  let src = 'undefined';
+  let line = '';
+  try {
+    const stack = (new Error()).stack;
+    if (stack) {
+      // console.error('Stack:', stack);
+      const stackLine = stack.split('\n')[4];
+      // console.error('Line:', stackLine);
+      if (stackLine) {
+        const match = stackLine.match(/^.*?at +?(.+?) .+?\.\/(src.+?)\?.*?:(\d+).*?$/);
+        if (match) {
+          func = match[1] || 'undefined';
+          src = match[2] || 'undefined';
+          line = match[3] || '';
+        }
+      }
+    }
+  } catch (e) {}
+  return `${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')} ${formatLogLevel(level)} [${strPad(category, 20)}|${strPad(func, 20)}|${strPad(src, 30)}|${line.padStart(5, ' ')}]:`;
+}
+
+function strPad(str: string, length: number): string {
+  if (str.length > length) {
+    const middle = Math.floor(length / 2);
+    const end = str.substring(str.length - middle);
+    return str.substring(0, length - middle - 3) + '...' + end;
+  }
+  return str.padEnd(length, ' ');
 }
 
 function init(category: string, logLevel: LogLevel): Logger {
