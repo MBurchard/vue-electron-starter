@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import {LogLevel, useLogger} from '@/common/simpleLog';
+import {useLogger} from '@/common/simpleLog';
 import HelloWorld from '@/vue/components/HelloWorld.vue';
 import {getFromBackend} from '@/vue/modules/backendBridge';
 
-const log = useLogger('HomeView', LogLevel.DEBUG);
+const log = useLogger('HomeView');
 
 getFromBackend('testChannel', 'HomeView').then(result => {
   log.debug('Test', result);
@@ -15,7 +15,7 @@ getFromBackend('testChannel', 'HomeView').then(result => {
   log.info('html element img test', img);
   log.info('html element test', element);
   log.info('function test', useLogger);
-  log.info('object test', {key1: 100, key2: true, key3: undefined, key4: {a: '', b: 'nix'}, arr1: [1, 2, 3, {a: 1, b: 2}]});
+  log.info('object test', {key1: 100, key2: true, key3: undefined, key4: {a: '', b: 'nix'}, arr1: [1, 2, 3, {a: 1, b: 2}, new Date()]});
 }).catch(reason => {
   log.error('Error getting data from Electron', reason);
 });

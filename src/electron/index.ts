@@ -1,6 +1,7 @@
-import {configureLogging, ConsoleWrapper, useLogger} from '@/common/simpleLog';
+import {configureLogging, ConsoleWrapper, LogLevel, useLogger} from '@/common/simpleLog';
 import {registerFrontendHandler} from '@/electron/frontendBridge';
-import {initFrontendLoggingBridge} from '@/electron/frontendLoggingBridge';
+import {FileAppender} from '@/electron/log/FileAppender';
+import {initFrontendLoggingBridge} from '@/electron/log/frontendLoggingBridge';
 import {app, BrowserWindow, protocol} from 'electron';
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer';
 import path from 'path';
@@ -10,10 +11,10 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
 configureLogging({
-  appender: [new ConsoleWrapper()],
+  appender: [new ConsoleWrapper(), new FileAppender({filename: 'log.txt', path: 'd:\\temp'})],
 });
 initFrontendLoggingBridge();
-const log = useLogger('electron-main');
+const log = useLogger('electron-main', LogLevel.TRACE);
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -21,10 +22,12 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 registerFrontendHandler('testChannel', (event, name) => {
+  log.trace('Test testChannel:', name);
   log.debug('Test testChannel:', name);
   log.info('Test testChannel:', name);
   log.warn('Test testChannel:', name);
   log.error('Test testChannel:', name);
+  log.fatal('Test testChannel:', name);
   return `Hello ${name}`;
 });
 

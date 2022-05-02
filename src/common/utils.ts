@@ -1,36 +1,39 @@
-export function deepCopy(sth: unknown): unknown {
-  if (!sth) {
-    return sth;
+/**
+ * Copies whatever is given.
+ * Handles simple types, Arrays, Dates, Functions, HTMLElements and Objects.
+ * Because of it's planed usage for logging and to transfer data between Electron front- and backend, some types are
+ * converted into string.
+ *
+ * @param source an unknown parameter that will be copied
+ */
+export function deepCopy(source: unknown): unknown {
+  if (!source) {
+    return source;
   }
-  if (sth instanceof Array || Array.isArray(sth)) {
-    const result: unknown[] = [];
-    sth.forEach(it => result.push(deepCopy(it)));
-    return result as never;
+  if (source instanceof Date) {
+    return new Date(source.getTime());
   }
-  if (sth instanceof HTMLElement) {
+  if (source instanceof Array || Array.isArray(source)) {
+    return source.map(elem => deepCopy(elem));
+  }
+  if (source instanceof HTMLElement) {
     let attributes = '';
-    sth.getAttributeNames().forEach(it => {
-      attributes += ` ${it}="${sth.getAttribute(it)}"`;
+    source.getAttributeNames().forEach(it => {
+      attributes += ` ${it}="${source.getAttribute(it)}"`;
     });
-    return `<${sth.nodeName}${attributes}>...</${sth.nodeName}>`;
+    return `<${source.nodeName}${attributes}>...</${source.nodeName}>`;
     // may also be an option...
-    // return sth.outerHTML;
+    // return source.outerHTML;
   }
-  if (sth instanceof Function) {
-    return `>>>${sth.toString()}<<<`;
+  if (source instanceof Function) {
+    return `${source.toString()}`;
   }
-  if (sth instanceof Object) {
+  if (source instanceof Object) {
     const result: { [key: string]: unknown } = {};
-    Object.entries(sth).forEach(([key, value]) => {
+    Object.entries(source).forEach(([key, value]) => {
       result[key] = deepCopy(value);
     });
     return result;
   }
-  return sth;
-}
-
-export function cloneArgs(...args: unknown[]): unknown[] {
-  const result: unknown[] = [];
-  args.forEach(it => result.push(deepCopy(it)));
-  return result;
+  return source;
 }

@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
 
 export enum LogLevel {
-  'DEBUG' = 10000,
-  'ERROR' = 1000,
-  'INFO' = 5000,
-  'TRACE' = 20000,
-  'WARN' = 2000,
+  'DEBUG' = 10,
+  'ERROR' = 40,
+  'FATAL' = 50,
+  'INFO' = 20,
+  'TRACE' = 0,
+  'WARN' = 30,
 }
 
 /**
@@ -42,6 +43,13 @@ class Logger {
     this.logLevel = logLevel;
   }
 
+  private log(level: LogLevel, ...args: unknown[]): void {
+    if (level >= this.logLevel) {
+      const prefix = formatPrefix(level, this.category);
+      appender.forEach(it => it.log(prefix, ...args));
+    }
+  }
+
   debug(...args: unknown[]): void {
     this.log(LogLevel.DEBUG, ...args);
   }
@@ -50,15 +58,16 @@ class Logger {
     this.log(LogLevel.ERROR, ...args);
   }
 
+  fatal(...args: unknown[]): void {
+    this.log(LogLevel.FATAL, ...args);
+  }
+
   info(...args: unknown[]): void {
     this.log(LogLevel.INFO, ...args);
   }
 
-  log(level: LogLevel, ...args: unknown[]): void {
-    if (level <= this.logLevel) {
-      const prefix = formatPrefix(level, this.category);
-      appender.forEach(it => it.log(prefix, ...args));
-    }
+  trace(...args: unknown[]): void {
+    this.log(LogLevel.TRACE, ...args);
   }
 
   warn(...args: unknown[]): void {
@@ -83,15 +92,17 @@ export function configureLogging(options: LoggerConfig) {
 function formatLogLevel(level: LogLevel): string {
   switch (level) {
     case LogLevel.DEBUG:
-      return '\x1B[36mDEBUG\x1B[m';
+      return '\x1B[37mDEBUG\x1B[m';
     case LogLevel.ERROR:
       return '\x1B[91mERROR\x1B[m';
+    case LogLevel.FATAL:
+      return '\x1B[95mFATAL\x1B[m';
     case LogLevel.INFO:
-      return ' \x1B[32mINFO\x1B[m';
+      return ' \x1B[92mINFO\x1B[m';
     case LogLevel.TRACE:
-      return 'TRACE';
+      return '\x1B[90mTRACE\x1B[m';
     case LogLevel.WARN:
-      return ' \x1B[33mWARN\x1B[m';
+      return ' \x1B[93mWARN\x1B[m';
   }
 }
 
@@ -155,5 +166,5 @@ export function logDirect(...args: unknown[]): void {
  * @param logLevel defaults to LogLevel.INFO
  */
 export function useLogger(category?: string, logLevel?: LogLevel): Logger {
-  return init(category || 'main', logLevel || LogLevel.INFO);
+  return init(category || 'main', logLevel === undefined ? LogLevel.INFO : logLevel);
 }
