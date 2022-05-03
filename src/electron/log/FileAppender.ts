@@ -1,6 +1,6 @@
 import {Appender} from '@/common/simpleLog';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 
 export interface FileAppenderOptions {
   filename: string;
