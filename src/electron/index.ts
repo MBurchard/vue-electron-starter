@@ -1,6 +1,6 @@
 import {configureLogging, ConsoleWrapper, LogLevel, useLogger} from '@/common/simpleLog';
 import {registerFrontendHandler} from '@/electron/frontendBridge';
-import {i18n} from '@/electron/i18n.config';
+import {i18n} from '@/common/i18n.config';
 import {FileAppender} from '@/electron/log/FileAppender';
 import {initFrontendLoggingBridge} from '@/electron/log/frontendLoggingBridge';
 import {buildMenu} from '@/electron/menu';
@@ -78,16 +78,6 @@ async function initMainWindow(): Promise<BrowserWindow> {
   });
   return win;
 }
-
-i18n.on('loaded', (loaded) => {
-  log.debug('i18n loaded:', loaded);
-  i18n.changeLanguage('en').then();
-  i18n.off('loaded');
-});
-
-i18n.on('missingKey', (lng, ns, key, fallback) => {
-  log.debug(`Missing i18n key value pair for language: ${lng}, namespace: ${ns}, key: ${key}, fallback: ${fallback}`);
-});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

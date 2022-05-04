@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import {useLogger} from '@/common/simpleLog';
+import {LogLevel, useLogger} from '@/common/simpleLog';
 import HelloWorld from '@/vue/components/HelloWorld.vue';
 import {getFromBackend} from '@/vue/modules/backendBridge';
+import {useI18n} from '@/vue/modules/vue-i18n';
 
-const log = useLogger('HomeView');
+const log = useLogger('HomeView', LogLevel.DEBUG);
 
 getFromBackend('testChannel', 'HomeView').then(result => {
   log.debug('Test', result);
@@ -20,11 +21,21 @@ getFromBackend('testChannel', 'HomeView').then(result => {
   log.error('Error getting data from Electron', reason);
 });
 
+const {changeLanguage, getLanguage, t} = useI18n();
+
+function toggleLang() {
+  if (getLanguage() === 'en') {
+    changeLanguage('de');
+  } else {
+    changeLanguage('en');
+  }
+}
+
 </script>
 
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <img alt="Vue logo" src="../../assets/logo.png" @click="toggleLang">
+    <HelloWorld :msg="t('HelloWorldMessage')"/>
   </div>
 </template>

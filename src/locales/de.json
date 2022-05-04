@@ -3,5 +3,6 @@
   "en": "Englisch",
   "&File": "&Datei",
   "&Language": "&Sprache",
-  "&Quit": "&Beenden"
+  "&Quit": "&Beenden",
+  "HelloWorldMessage": "Willkommen bei Ihrer Vue.js + TypeScript App"
 }
