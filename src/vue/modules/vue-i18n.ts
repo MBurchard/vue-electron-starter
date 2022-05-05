@@ -1,6 +1,6 @@
 import {i18n} from '@/common/i18n.config';
 import {LogLevel, useLogger} from '@/common/simpleLog';
-import {Callback, TFunction} from 'i18next';
+import {registerBackendListener, sendToBackend} from '@/vue/modules/backendBridge';
 import {ref} from 'vue';
 
 const log = useLogger('vue-i18n', LogLevel.DEBUG);
@@ -10,6 +10,12 @@ const locale = ref<string>('en');
 i18n.on('languageChanged', (lng) => {
   log.debug('i18n languageChanged:', lng);
   locale.value = lng;
+});
+
+registerBackendListener('languageChanged', (event, lng: string) => {
+  i18n.changeLanguage(lng).then(() => {
+    log.debug('langauge changed from backend');
+  });
 });
 
 /**
@@ -25,12 +31,15 @@ function t(key: string): string | undefined {
 }
 
 export function useI18n(): {
-  changeLanguage: (lng?: string, callback?: Callback) => Promise<TFunction>
+  changeLanguage: (lng: string) => void
   getLanguage: () => string
   t: (key: string) => string | undefined
   } {
   return {
-    changeLanguage: i18n.changeLanguage,
+    changeLanguage: (lng: string) => {
+      i18n.changeLanguage(lng).then();
+      sendToBackend('languageChanged', lng);
+    },
     getLanguage: () => {
       return i18n.language;
     },

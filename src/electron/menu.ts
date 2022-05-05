@@ -1,4 +1,5 @@
 import {LogLevel, useLogger} from '@/common/simpleLog';
+import {changeLanguage} from '@/electron/frontendI18nBridge';
 import {app, BrowserWindow, Menu, MenuItemConstructorOptions} from 'electron';
 import {i18n} from 'i18next';
 
@@ -12,14 +13,14 @@ const log = useLogger('electron-main-menu', LogLevel.DEBUG);
  * MenuItemConstructorOptions[]. Consider to define submenus as separately typed variables.
  * For the demo purpose we just need some basic menu entries.
  */
-function getTemplate(i18n: i18n): MenuItemConstructorOptions[] {
+function getTemplate(win: BrowserWindow, i18n: i18n): MenuItemConstructorOptions[] {
   const langMenu: MenuItemConstructorOptions[] = ['de', 'en'].map(code => {
     return {
       label: i18n.t(code),
       type: 'radio',
       checked: i18n.language === code,
       click: () => {
-        i18n.changeLanguage(code).then();
+        changeLanguage(win, code);
       },
     };
   });
@@ -55,7 +56,7 @@ function getTemplate(i18n: i18n): MenuItemConstructorOptions[] {
 
 export function buildMenu(win: BrowserWindow, i18n: i18n) {
   log.debug('build Menu');
-  const menu = Menu.buildFromTemplate(getTemplate(i18n));
+  const menu = Menu.buildFromTemplate(getTemplate(win, i18n));
   if (isMac) {
     Menu.setApplicationMenu(menu);
   } else {

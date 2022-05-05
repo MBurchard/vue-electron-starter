@@ -1,6 +1,7 @@
+import {i18n} from '@/common/i18n.config';
 import {configureLogging, ConsoleWrapper, LogLevel, useLogger} from '@/common/simpleLog';
 import {registerFrontendHandler} from '@/electron/frontendBridge';
-import {i18n} from '@/common/i18n.config';
+import {initFrontendI18nBridge} from '@/electron/frontendI18nBridge';
 import {FileAppender} from '@/electron/log/FileAppender';
 import {initFrontendLoggingBridge} from '@/electron/log/frontendLoggingBridge';
 import {buildMenu} from '@/electron/menu';
@@ -16,6 +17,7 @@ configureLogging({
   appender: [new ConsoleWrapper(), new FileAppender({filename: 'log.txt', path: 'd:\\temp'})],
 });
 initFrontendLoggingBridge();
+initFrontendI18nBridge();
 const log = useLogger('electron-main', LogLevel.TRACE);
 
 // Scheme must be registered before the app is ready
@@ -32,7 +34,7 @@ if (process.platform === 'linux') {
 // restart the whole application to correct that bad behaviour...
 // app.commandLine.appendSwitch('lang', 'en');
 
-registerFrontendHandler('testChannel', (event, name) => {
+registerFrontendHandler('testChannel', async (event, name: string) => {
   log.trace('Test testChannel:', name);
   log.debug('Test testChannel:', name);
   log.info('Test testChannel:', name);
@@ -70,11 +72,16 @@ async function createWindow(): Promise<BrowserWindow> {
 }
 
 async function initMainWindow(): Promise<BrowserWindow> {
-  const win = await createWindow();
+  let win: BrowserWindow | null = await createWindow();
+  win.on('closed', () => {
+    win = null;
+  });
   buildMenu(win, i18n);
   i18n.on('languageChanged', (lng) => {
     log.debug('i18n languageChanged:', lng);
-    buildMenu(win, i18n);
+    if (win) {
+      buildMenu(win, i18n);
+    }
   });
   return win;
 }
