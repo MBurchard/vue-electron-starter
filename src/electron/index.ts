@@ -14,7 +14,10 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
 configureLogging({
-  appender: [new ConsoleWrapper(), new FileAppender({basename: 'vue-electron-starter', path: 'd:\\temp', pattern: 'YYYY-MM-DD-HH'})],
+  appender: [
+    new ConsoleWrapper(),
+    new FileAppender({basename: 'vue-electron-starter', path: 'd:\\temp', pattern: 'YYYY-MM-DD'}),
+  ],
 });
 const log = useLogger('electron-main', LogLevel.TRACE);
 
@@ -123,11 +126,3 @@ if (isDevelopment) {
     });
   }
 }
-
-let count = 1;
-// long time logging test
-function longTimeLoggingTest() {
-  log.debug('This is the logging test:', count++);
-  setTimeout(longTimeLoggingTest, 10);
-}
-longTimeLoggingTest();
