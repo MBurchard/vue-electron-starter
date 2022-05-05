@@ -3,6 +3,9 @@ import {registerFrontendListener} from '@/electron/frontendBridge';
 
 let initialised = false;
 
+/**
+ * Registers a frontend listener on channel 'logging'.
+ */
 export function initFrontendLoggingBridge() {
   if (!initialised) {
     registerFrontendListener('logging', (event, ...args) => {

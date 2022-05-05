@@ -16,9 +16,10 @@ const isMac = process.platform === 'darwin';
 configureLogging({
   appender: [new ConsoleWrapper(), new FileAppender({filename: 'log.txt', path: 'd:\\temp'})],
 });
+const log = useLogger('electron-main', LogLevel.TRACE);
+
 initFrontendLoggingBridge();
 initFrontendI18nBridge();
-const log = useLogger('electron-main', LogLevel.TRACE);
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);
@@ -28,11 +29,6 @@ if (process.platform === 'linux') {
   app.commandLine.appendSwitch('enable-transparent-visuals');
   app.commandLine.appendSwitch('disable-gpu');
 }
-
-// this is as off Electron version >=18 sadly the only way to change the locale and sadly the only way to change menu
-// accelerators to be shown in the correct language. This also means you may change the language at runtime but need to
-// restart the whole application to correct that bad behaviour...
-// app.commandLine.appendSwitch('lang', 'en');
 
 registerFrontendHandler('testChannel', async (event, name: string) => {
   log.trace('Test testChannel:', name);
