@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Copies whatever is given.
  * Handles simple types, Arrays, Dates, Functions, HTMLElements and Objects.
  * Because of it's planed usage for logging and to transfer data between Electron front- and backend, some types are
  * converted into string.
  *
- * @param source an unknown parameter that will be copied
+ * @param source an any parameter that will be copied
  */
-export function deepCopy(source: unknown): unknown {
+export function deepCopy(source: any): any {
   if (!source) {
     return source;
   }
@@ -29,7 +30,7 @@ export function deepCopy(source: unknown): unknown {
     return `${source.toString()}`;
   }
   if (source instanceof Object) {
-    const result: { [key: string]: unknown } = {};
+    const result: { [key: string]: any } = {};
     Object.entries(source).forEach(([key, value]) => {
       result[key] = deepCopy(value);
     });

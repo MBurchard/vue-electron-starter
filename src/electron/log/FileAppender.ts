@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Appender} from '@/common/simpleLog';
 import fs from 'fs';
 import path from 'path';
@@ -26,7 +27,7 @@ export class FileAppender implements Appender {
     return this.stream;
   }
 
-  private toText(...args: unknown[]) {
+  private toText(...args: any[]) {
     const buffer: string[] = [];
     args.forEach(arg => {
       if (arg instanceof Object) {
@@ -38,7 +39,7 @@ export class FileAppender implements Appender {
     return buffer.join(' ');
   }
 
-  async log(...args: unknown[]): Promise<void> {
+  async log(...args: any[]): Promise<void> {
     const stream = this.prepareStream();
     try {
       stream.cork();

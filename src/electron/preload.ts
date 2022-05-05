@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useLogger} from '@/common/simpleLog';
 import {contextBridge, ipcRenderer, IpcRendererEvent} from 'electron';
 
@@ -10,7 +11,7 @@ const log = useLogger('preload');
  * @param args
  */
 contextBridge.exposeInMainWorld('getFromBackend',
-  async function(channel: string, ...args: unknown[]): Promise<unknown> {
+  async function(channel: string, ...args: any[]): Promise<any> {
     try {
       return ipcRenderer.invoke(channel, ...args);
     } catch (e) {
@@ -25,7 +26,7 @@ contextBridge.exposeInMainWorld('getFromBackend',
  * @param args
  */
 contextBridge.exposeInMainWorld('sendToBackend',
-  function(channel: string, ...args: unknown[]): void {
+  function(channel: string, ...args: any[]): void {
     try {
       ipcRenderer.send(channel, ...args);
     } catch (e) {
@@ -40,7 +41,7 @@ contextBridge.exposeInMainWorld('sendToBackend',
  * @param listener
  */
 contextBridge.exposeInMainWorld('registerBackendListener',
-  function(channel: string, listener: (event: IpcRendererEvent, ...args: unknown[]) => void): void {
+  function(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): void {
     try {
       ipcRenderer.on(channel, listener);
     } catch (e) {
@@ -55,7 +56,7 @@ contextBridge.exposeInMainWorld('registerBackendListener',
  * @param listener
  */
 contextBridge.exposeInMainWorld('registerBackendListenerOnce',
-  function(channel: string, listener: (event: IpcRendererEvent, ...args: unknown[]) => void): void {
+  function(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): void {
     try {
       ipcRenderer.once(channel, listener);
     } catch (e) {

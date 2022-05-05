@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dayjs from 'dayjs';
 
 export enum LogLevel {
@@ -13,14 +14,14 @@ export enum LogLevel {
  * An Appender interface that is able to log asynchronously.
  */
 export interface Appender {
-  log: (...args: unknown[]) => Promise<void>;
+  log: (...args: any[]) => Promise<void>;
 }
 
 /**
  * A wrapper for the console log, because this is not asynchron by default.
  */
 export class ConsoleWrapper implements Appender {
-  async log(...args: unknown[]): Promise<void> {
+  async log(...args: any[]): Promise<void> {
     console.log(...args);
   }
 }
@@ -43,34 +44,34 @@ class Logger {
     this.logLevel = logLevel;
   }
 
-  private log(level: LogLevel, ...args: unknown[]): void {
+  private log(level: LogLevel, ...args: any[]): void {
     if (level >= this.logLevel) {
       const prefix = formatPrefix(level, this.category);
       appender.forEach(it => it.log(prefix, ...args));
     }
   }
 
-  debug(...args: unknown[]): void {
+  debug(...args: any[]): void {
     this.log(LogLevel.DEBUG, ...args);
   }
 
-  error(...args: unknown[]): void {
+  error(...args: any[]): void {
     this.log(LogLevel.ERROR, ...args);
   }
 
-  fatal(...args: unknown[]): void {
+  fatal(...args: any[]): void {
     this.log(LogLevel.FATAL, ...args);
   }
 
-  info(...args: unknown[]): void {
+  info(...args: any[]): void {
     this.log(LogLevel.INFO, ...args);
   }
 
-  trace(...args: unknown[]): void {
+  trace(...args: any[]): void {
     this.log(LogLevel.TRACE, ...args);
   }
 
-  warn(...args: unknown[]): void {
+  warn(...args: any[]): void {
     this.log(LogLevel.WARN, ...args);
   }
 }
@@ -155,7 +156,7 @@ function init(category: string, logLevel: LogLevel): Logger {
  *
  * @param args
  */
-export function logDirect(...args: unknown[]): void {
+export function logDirect(...args: any[]): void {
   appender.forEach(it => it.log(...args));
 }
 

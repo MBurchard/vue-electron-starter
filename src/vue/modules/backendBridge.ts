@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {deepCopy} from '@/common/utils';
 
 /**
@@ -13,7 +14,7 @@ import {deepCopy} from '@/common/utils';
  * @param args any additional parameters/data
  * @return Promise
  */
-export async function getFromBackend(channel: string, ...args: unknown[]): Promise<unknown> {
+export async function getFromBackend(channel: string, ...args: any[]): Promise<any> {
   return window.getFromBackend(channel, ...args.map(elem => deepCopy(elem)));
 }
 
@@ -23,7 +24,7 @@ export async function getFromBackend(channel: string, ...args: unknown[]): Promi
  * @param channel text channel name, that must be available at the backend
  * @param args any additional parameters/data
  */
-export function sendToBackend(channel: string, ...args: unknown[]): void {
+export function sendToBackend(channel: string, ...args: any[]): void {
   window.sendToBackend(channel, ...args.map(elem => deepCopy(elem)));
 }
 
