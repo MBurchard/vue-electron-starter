@@ -14,6 +14,7 @@ export interface FileAppenderOptions {
 export class FileAppender implements Appender {
   private readonly options: FileAppenderOptions;
   private stream: undefined | fs.WriteStream;
+  private currentFileName: undefined | string;
 
   constructor(options: FileAppenderOptions) {
     this.options = options;
@@ -34,7 +35,15 @@ export class FileAppender implements Appender {
 
   private prepareStream(): fs.WriteStream {
     if (this.stream === undefined) {
-      this.stream = fs.createWriteStream(this.getAbsolutFilePath(), {flags: 'a+'});
+      this.currentFileName = this.getAbsolutFilePath();
+      this.stream = fs.createWriteStream(this.currentFileName, {flags: 'a+'});
+    } else {
+      const currentFileName = this.getAbsolutFilePath();
+      if (this.currentFileName !== currentFileName) {
+        this.stream.end();
+        this.currentFileName = currentFileName;
+        this.stream = fs.createWriteStream(this.currentFileName, {flags: 'a+'});
+      }
     }
     return this.stream;
   }
