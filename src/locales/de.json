@@ -4,5 +4,7 @@
   "&File": "&Datei",
   "&Language": "&Sprache",
   "&Quit": "&Beenden",
-  "HelloWorldMessage": "Willkommen bei Ihrer Vue.js + TypeScript App"
+  "About": "Über",
+  "HelloWorldMessage": "Willkommen bei Ihrer Vue.js + TypeScript App",
+  "Home": "Start"
 }
