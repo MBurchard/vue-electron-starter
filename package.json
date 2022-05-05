@@ -1,7 +1,10 @@
 {
   "name": "vue-electron-starter",
   "version": "0.1.0",
-  "private": true,
+  "description": "An Electron starter project",
+  "author": "Martin Burchard",
+  "license": "MIT",
+  "repository": "https://github.com/MBurchard/vue-electron-starter",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -11,6 +14,10 @@
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
+  },
+  "engines": {
+    "node": ">=16.5",
+    "npm": ">=8.8"
   },
   "dependencies": {
     "core-js": "^3.8.3",
@@ -48,9 +55,5 @@
     "ts-jest": "^27.0.4",
     "typescript": "^4",
     "vue-cli-plugin-electron-builder": "^3.0.0-alpha.4"
-  },
-  "engines": {
-    "node": ">=16.5",
-    "npm": ">=8.8"
   }
 }
