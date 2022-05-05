@@ -14,7 +14,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
 configureLogging({
-  appender: [new ConsoleWrapper(), new FileAppender({filename: 'log.txt', path: 'd:\\temp'})],
+  appender: [new ConsoleWrapper(), new FileAppender({basename: 'vue-electron-starter', path: 'd:\\temp', pattern: 'YYYY-MM-DD-HH'})],
 });
 const log = useLogger('electron-main', LogLevel.TRACE);
 
@@ -32,11 +32,6 @@ if (process.platform === 'linux') {
 
 registerFrontendHandler('testChannel', async (event, name: string) => {
   log.trace('Test testChannel:', name);
-  log.debug('Test testChannel:', name);
-  log.info('Test testChannel:', name);
-  log.warn('Test testChannel:', name);
-  log.error('Test testChannel:', name);
-  log.fatal('Test testChannel:', name);
   return `Hello ${name}`;
 });
 
@@ -128,3 +123,11 @@ if (isDevelopment) {
     });
   }
 }
+
+let count = 1;
+// long time logging test
+function longTimeLoggingTest() {
+  log.debug('This is the logging test:', count++);
+  setTimeout(longTimeLoggingTest, 10);
+}
+longTimeLoggingTest();

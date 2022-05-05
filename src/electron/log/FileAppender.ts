@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Appender} from '@/common/simpleLog';
+import dayjs from 'dayjs';
 import fs from 'fs';
 import path from 'path';
 
 export interface FileAppenderOptions {
-  filename: string;
+  basename: string;
+  extension?: string;
   path: string;
+  pattern?: string;
 }
 
 export class FileAppender implements Appender {
@@ -17,7 +20,16 @@ export class FileAppender implements Appender {
   }
 
   private getAbsolutFilePath() {
-    return path.join(this.options.path, this.options.filename);
+    let fileName = this.options.basename;
+    if (this.options.pattern) {
+      try {
+        fileName += '.' + dayjs().format(this.options.pattern);
+      } catch (e) {
+        console.error(`Error in date pattern '${this.options.pattern}' for FileAppender`, e);
+      }
+    }
+    fileName += '.' + (this.options.extension || 'log');
+    return path.join(this.options.path, fileName);
   }
 
   private prepareStream(): fs.WriteStream {
