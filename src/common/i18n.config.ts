@@ -29,12 +29,6 @@ if (!i18next.isInitialized) {
 
 export const i18n = i18next;
 
-i18n.on('loaded', (loaded) => {
-  log.debug('i18n loaded:', loaded);
-  i18n.changeLanguage('en').then();
-  i18n.off('loaded');
-});
-
 i18n.on('missingKey', (lng, ns, key, fallback) => {
   log.debug(`Missing i18n key value pair for language: ${lng}, namespace: ${ns}, key: ${key}, fallback: ${fallback}`);
 });
