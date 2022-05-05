@@ -118,7 +118,7 @@ function formatPrefix(level: LogLevel, category: string): string {
       const stackLine = stack.split('\n')[4];
       // console.error('Line:', stackLine);
       if (stackLine) {
-        const match = stackLine.match(/^.*?at +?(.+?) .+?\.\/(src.+?)\?.*?:(\d+).*?$/);
+        const match = stackLine.match(/^.*?at +?(.+?) .+?\.\/(src.+?)(?:\?.*?)?:(\d+).*?$/);
         if (match) {
           func = match[1] || 'undefined';
           src = match[2] || 'undefined';
